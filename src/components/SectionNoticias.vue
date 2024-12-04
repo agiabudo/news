@@ -11,8 +11,9 @@
 
    async function filtroNoticia(filtroid){
         filtroSelecionado.value = filtroid;
-        const category = (filtroid==0) ? 'technology' : 'business';
-        const endpoint = `https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=1e5f5688e7104daa9f0e5000c51866bc`;
+        const country = (filtroid==0) ? 'br' : 'us';
+        const apiKey = 'pub_61295e260407906027d97f9a1ca5f06d5e4cb';
+        const endpoint = `https://newsdata.io/api/1/news?apikey=${apiKey}&country=${country}`;
        
         try{
             noticias.value = [];
@@ -22,14 +23,16 @@
             const response = await fetch(endpoint);
             const data = await response.json();
             console.log(data)
-            data.articles.forEach((art, index) => {
+
+
+            data.results.forEach((art, index) => {
                 noticias.value.push({
                     id:         index,
-                    autor:      art.author,
+                    autor:      (art.creator==null) ? 'Desconhecido' : art.creator[0],
                     titulo:     art.title,
-                    descricao:  art.description,
-                    publicado:  art.publishedAt,
-                    src_imagem: art.urlToImage
+                    descricao:  art.v,
+                    publicado:  art.pubDate,
+                    src_imagem: art.image_url
                 })                
             });
         } catch(error) {
@@ -56,11 +59,11 @@
             <div class="option">
                 <button 
                 :class="{selected:(filtroSelecionado==0) ? true : false}"
-                @click="filtroNoticia(0)">Teclologia</button>
+                @click="filtroNoticia(0)">Brasil</button>
                 
                 <button 
                 :class="{selected:(filtroSelecionado==1) ? true : false}"
-                @click="filtroNoticia(1)">Negocio</button>
+                @click="filtroNoticia(1)">USA</button>
             </div>
         </div>
         <!-- carregamento -->
