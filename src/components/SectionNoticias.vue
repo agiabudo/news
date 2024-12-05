@@ -2,29 +2,31 @@
     import { onMounted, ref } from 'vue';
     import Noticia from './Noticia.vue';
     
-    const noticias = ref([]);
-
-    const carregando = ref(false);
-    const carregando_erro = ref(false);
-
+    // variaveis constantes.
+    const noticias          = ref([]);
+    const carregando        = ref(false);
+    const carregando_erro   = ref(false);
     const filtroSelecionado = ref(0);
-
-   async function filtroNoticia(filtroid){
+    // funcao: Recarregar noticias
+    function reload() { filtroNoticia(filtroSelecionado.value); }
+    // funcao: Buscar noticias (API)
+    async function filtroNoticia(filtroid){
         filtroSelecionado.value = filtroid;
-        const country = (filtroid==0) ? 'br' : 'us';
-        const apiKey = 'pub_61295e260407906027d97f9a1ca5f06d5e4cb';
+
+        const countrys = ['br', 'us', 'mz'];
+        const country  = countrys[filtroid];
+        const apiKey   = 'pub_61295e260407906027d97f9a1ca5f06d5e4cb';
         const endpoint = `https://newsdata.io/api/1/news?apikey=${apiKey}&country=${country}`;
        
         try{
+            // variaveis
             noticias.value = [];
             carregando.value = true;
             carregando_erro.value = false;
-            
+            // request
             const response = await fetch(endpoint);
             const data = await response.json();
-            console.log(data)
-
-
+            // tratamento dos dados.
             data.results.forEach((art, index) => {
                 noticias.value.push({
                     id:         index,
@@ -32,7 +34,8 @@
                     titulo:     art.title,
                     descricao:  art.v,
                     publicado:  art.pubDate,
-                    src_imagem: art.image_url
+                    src_imagem: art.image_url,
+                    link:       art.link,
                 })                
             });
         } catch(error) {
@@ -40,7 +43,6 @@
             carregando_erro.value = true;
         } finally {
             carregando.value = false;
-            console.warn('noticias carregadas com sucesso');
         }
     }
 
@@ -54,26 +56,36 @@
 
     <section>
         <p>Noticias</p>
+        <!-- Filtro -->
         <div class="container-filtro">
             <p>Filtros</p>
             <div class="option">
+                <!-- Brasil -->
                 <button 
                 :class="{selected:(filtroSelecionado==0) ? true : false}"
                 @click="filtroNoticia(0)">Brasil</button>
-                
+                <!-- USA -->
                 <button 
                 :class="{selected:(filtroSelecionado==1) ? true : false}"
                 @click="filtroNoticia(1)">USA</button>
+                <!-- Moçambique -->
+                <button 
+                :class="{selected:(filtroSelecionado==2) ? true : false}"
+                @click="filtroNoticia(2)">Moçambique</button>
+                <!-- Reaload -->
+                <button 
+                class="reaload"
+                @click="reload()"><i class='bx bx-refresh'></i></button>
             </div>
         </div>
-        <!-- carregamento -->
+        <!-- Carregamento -->
         <div class="loading" v-if="carregando" >
         </div>
-        <!-- erro de carregamento -->
+        <!-- Erro de carregamento -->
         <div v-if="carregando_erro" class="error">
             Erro ao buscar as noticias
         </div>
-        <!-- noticias -->
+        <!-- Noticias -->
         <div class="container">
             <!-- noticia -->
             <Noticia v-for="noticia in noticias" 
@@ -84,6 +96,7 @@
             :descricao  = "noticia.descricao"
             :publicado  = "noticia.publicado"
             :src_imagem = "noticia.src_imagem"
+            :link       = "noticia.link"
             />
         </div>
     </section>
@@ -110,13 +123,23 @@
         gap: 10px;
     }
     .container-filtro button{
+        display: flex;
+        align-items: center;
+        justify-content: center;
         padding: 10px 15px;
         border: none;
         border-radius: 5px;
         cursor: pointer;
     }
+    .reaload{
+        padding: 0px;
+        margin-left: auto;
+        background-color: transparent;
+        font-size: 24px;
+    }
     .container-filtro button.selected{
-        background-color: aquamarine;
+        background-color: rgb(9, 99, 255);
+        color: #fff;
     }
     section>p{
         font-size: 22px;         

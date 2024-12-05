@@ -2,19 +2,21 @@
 
     import ScrollReveal from 'scrollreveal';
     import { onMounted } from 'vue';
-
+    
+    // propredades do componente (pai: SectionNoticias)
     const props = defineProps({
-        id: Number,
-        autor: String,
-        titulo: String,
-        descricao: String,
-        publicado: String,
-        src_imagem: String
+        id:         Number,
+        autor:      String,
+        titulo:     String,
+        descricao:  String,
+        publicado:  String,
+        src_imagem: String,
+        link:       String
     })
 
     onMounted(() =>{
         ScrollReveal().reveal('.noticia',{
-            duration:  2000,
+            duration:  1500,
             distance: '50px'
         })
     })
@@ -27,6 +29,7 @@
         <div class="noticia-informacoes">
             <p class="noticia-autor">{{props.autor}}</p>
             <p class="noticia-titulo">{{props.titulo}}</p>
+            <a :href="props.link" target="_blank" >Ver esta noticia</a>
             <p class="noticia-publicada">Publicada: {{props.publicado}}</p>
         </div>
     </div>
@@ -55,6 +58,12 @@
         color: gray;
     
     }
+    a{
+        text-decoration: none;
+        font-size: 18px;
+        color: rgb(107, 0, 221);
+        font-weight: 600;
+    }
     /* telas menores que 400px */
     @media(max-width: 800px){
         .noticia{
@@ -65,7 +74,7 @@
         }
     }
     /* telas menores que 400px */
-    @media(max-width: 400px){
+    @media(max-width: 500px){
         .noticia{
             width: 350px;
         }

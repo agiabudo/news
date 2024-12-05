@@ -1,7 +1,6 @@
 <script setup>
-import Header from './components/Header.vue';
-import SectionNoticias from './components/SectionNoticias.vue';
-
+  import Header from './components/Header.vue';
+  import SectionNoticias from './components/SectionNoticias.vue';
 </script>
 
 <template>
